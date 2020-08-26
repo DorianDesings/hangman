@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Hangman</title>
+  </head>
+  <body>
+    <h1>Hangman</h1>
+    <div class="game">
+      <!-- Hangman -->
+      <svg height="250" width="200" class="hangman__container">
+        <!-- Rod -->
+        <line x1="60" y1="20" x2="140" y2="20" />
+        <line x1="140" y1="20" x2="140" y2="50" />
+        <line x1="60" y1="20" x2="60" y2="230" />
+        <line x1="20" y1="230" x2="100" y2="230" />
+
+        <!-- Head -->
+        <circle cx="140" cy="70" r="20" class="hangman__part" />
+        <!-- Body -->
+        <line x1="140" y1="90" x2="140" y2="150" class="hangman__part" />
+        <!-- Arms -->
+        <line x1="140" y1="120" x2="120" y2="100" class="hangman__part" />
+        <line x1="140" y1="120" x2="160" y2="100" class="hangman__part" />
+        <!-- Legs -->
+        <line x1="140" y1="150" x2="120" y2="180" class="hangman__part" />
+        <line x1="140" y1="150" x2="160" y2="180" class="hangman__part" />
+      </svg>
+      <div id="word-element" class="word"></div>
+      <div id="keyboard" class="keyboard"></div>
+      <div id="pop-up" class="pop-up">
+        <p id="pop-up-text" class="pop-up__text"></p>
+        <button id="pop-up-button" class="pop-up__button"></button>
+      </div>
+    </div>
+    <script src="scripts.js"></script>
+  </body>
+</html>

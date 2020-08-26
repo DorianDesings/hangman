@@ -1,0 +1,86 @@
+.game {
+  position: relative;
+  margin: auto;
+  width: 95vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.hangman__container {
+  fill: transparent;
+  stroke: #fff;
+  stroke-width: 4px;
+  stroke-linecap: round;
+}
+
+.hangman__part {
+  display: none;
+}
+
+.word {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10rem;
+}
+
+.letter {
+  border-bottom: 3px solid black;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+  font-size: 50px;
+  width: 20px;
+  height: 50px;
+}
+
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(13, 1fr);
+  gap: 15px;
+  justify-items: center;
+}
+
+.keyboard__key {
+  background-color: #4cccb0;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.keyboard__key--used {
+  background-color: #28685a;
+}
+
+.pop-up {
+  position: fixed;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  width: 500px;
+  height: 300px;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  transition: transform 0.4s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 50px;
+  color: #fff;
+}
+
+.pop-up__text {
+  margin: 0;
+  margin-bottom: 2rem;
+}
+
+.pop-up__button {
+  padding: 1rem;
+  width: 300px;
+  font-size: 20px;
+}
+
+.pop-up--show {
+  transform: translateX(-50%) scale(1);
+}
