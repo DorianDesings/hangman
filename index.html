@@ -8,7 +8,7 @@
   </head>
   <body>
     <h1>Hangman</h1>
-    <div class="game">
+    <div id="game" class="game">
       <!-- Hangman -->
       <svg height="250" width="200" class="hangman__container">
         <!-- Rod -->
@@ -29,12 +29,14 @@
         <line x1="140" y1="150" x2="160" y2="180" class="hangman__part" />
       </svg>
       <div class="score">
-        <p id="score-text" class="score__text"></p>
-        <p id="score-lose" class="score__losses">L: 2</p>
-        <p id="score-wins" class="score__wins">W: 3</p>
+        <p id="score-record" class="score__text"></p>
+        <p id="score-points" class="score__text"></p>
+        <p id="score-losses" class="score__losses"></p>
+        <p id="score-wins" class="score__wins"></p>
       </div>
       <div id="word-element" class="word"></div>
       <div id="keyboard" class="keyboard"></div>
+      <button id="button-help" class="button-help">HELP!</button>
       <div id="pop-up" class="pop-up">
         <p id="pop-up-text" class="pop-up__text"></p>
         <button id="pop-up-button" class="pop-up__button"></button>

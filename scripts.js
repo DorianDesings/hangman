@@ -1,20 +1,18 @@
+const gameElement = document.getElementById('game');
 const wordElement = document.getElementById('word-element');
 const keyboard = document.getElementById('keyboard');
 const hangmanParts = document.querySelectorAll('.hangman__part');
 const popUp = document.getElementById('pop-up');
 const popUpText = document.getElementById('pop-up-text');
 const popUpButton = document.getElementById('pop-up-button');
-
-const scoreText = document.getElementById('score-text');
-const scoreLosse = document.getElementById('score-losses');
+const scoreRecord = document.getElementById('score-record');
+const scorePoints = document.getElementById('score-points');
+const scoreLosses = document.getElementById('score-losses');
 const scoreWins = document.getElementById('score-wins');
+const buttonHelp = document.getElementById('button-help');
 
 const ls = localStorage;
-
-const games = {
-  wins: 0,
-  losses: 0
-};
+let canHelp = true;
 
 const words = ['ordenador', 'javascript'];
 const letters = [
@@ -51,42 +49,79 @@ const maxAttempts = 5;
 let attempts = 0;
 let totalPoints = 0;
 
-const writeInLocalStorage = (wins = 0, looses = 0) => {
-  if (localStorage.getItem('totalScore')) {
-    const totalScoreLS = JSON.parse(localStorage.getItem('totalScore'));
-    games.wins = totalScoreLS.wins;
-    games.losses = totalScoreLS.losses;
+let gameMemoryCard = {};
+
+const firstRenderPoints = () => {
+  if (ls.getItem('totalScore')) {
+    gameMemoryCard = JSON.parse(ls.getItem('totalScore'));
+    scoreRecord.textContent = `Record: ${gameMemoryCard.record}`;
+    scorePoints.textContent = 'Score: 0';
+    scoreLosses.textContent = `L: ${gameMemoryCard.losses}`;
+    scoreWins.textContent = `W: ${gameMemoryCard.wins}`;
   } else {
-    localStorage.setItem('totalScore', JSON.stringify(games));
+    ls.setItem(
+      'totalScore',
+      JSON.stringify({ wins: 0, losses: 0, points: 0, record: 0 })
+    );
   }
 };
 
-//TODO terminar función para el localstorage
+const setRecord = () => {
+  if (totalPoints > gameMemoryCard.record) {
+    return totalPoints;
+  }
+
+  return gameMemoryCard.record;
+};
+
+const updateLocalStorage = (points = 0) => {
+  totalPoints += points;
+  if (ls.getItem('totalScore')) {
+    const gameStatus = {
+      wins: gameMemoryCard.wins,
+      losses: gameMemoryCard.losses,
+      points: totalPoints,
+      record: setRecord()
+    };
+
+    gameMemoryCard = gameStatus;
+
+    ls.setItem('totalScore', JSON.stringify(gameStatus));
+    scoreRecord.textContent = `Record: ${gameStatus.record}`;
+    scorePoints.textContent = `Score: ${totalPoints} `;
+    scoreLosses.textContent = `L: ${gameMemoryCard.losses}`;
+    scoreWins.textContent = `W: ${gameMemoryCard.wins}`;
+  }
+};
 
 const getRandomWord = () =>
   words[Math.floor(Math.random() * words.length)].toUpperCase();
 
 let selectedWord = getRandomWord();
+let helpWord = selectedWord;
 
 const showPopUp = win => {
   popUp.classList.add('pop-up--show');
   popUpText.textContent = win ? 'HAS GANADO' : 'HAS PERDIDO';
   popUpButton.textContent = 'JUGAR OTRA VEZ';
-};
-
-const scoreMaster = points => {
-  totalPoints += points;
-  scoreText.textContent = `Score: ${totalPoints}`;
+  win ? (gameMemoryCard.wins += 1) : (gameMemoryCard.losses += 1);
+  updateLocalStorage();
 };
 
 const resetGame = () => {
   correctLetters = [];
   selectedWord = getRandomWord();
+  helpWord = selectedWord;
   writeWord();
   removeUsedLetters();
   popUp.classList.remove('pop-up--show');
   popUpText.textContent = '';
   popUpButton.textContent = '';
+  const button = document.createElement('BUTTON');
+  button.id = 'button-help';
+  button.classList.add('button-help');
+  button.textContent = 'HELP!!';
+  gameElement.appendChild(button);
 };
 
 const writeWord = () => {
@@ -133,16 +168,31 @@ const updateWrongAttempts = () => {
   }
 };
 
+const findHelpLetter = () => {
+  const randomLetter = helpWord.charAt(
+    Math.round(Math.random() * helpWord.length)
+  );
+
+  buttonHelp.remove();
+  checkLetter(randomLetter);
+  canHelp = false;
+};
+
+const updateHelpLetter = letter => {
+  helpWord = helpWord.replaceAll(letter, '');
+};
+
 const checkLetter = letter => {
   if (selectedWord.includes(letter)) {
     if (!correctLetters.includes(letter)) {
       correctLetters.push(letter);
       writeWord();
-      scoreMaster(10);
+      canHelp ? updateLocalStorage() : updateLocalStorage(10);
+      updateHelpLetter(letter);
     }
   } else {
     updateWrongAttempts();
-    scoreMaster(-5);
+    updateLocalStorage(-5);
   }
 };
 
@@ -175,6 +225,12 @@ popUpButton.addEventListener('click', () => {
   resetGame();
 });
 
+gameElement.addEventListener('click', e => {
+  if (e.target.classList.contains('button-help')) {
+    findHelpLetter();
+  }
+});
+
 writeWord();
 writeKeyboard();
-scoreMaster(0);
+firstRenderPoints();
