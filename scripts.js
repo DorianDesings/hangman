@@ -9,10 +9,12 @@ const scoreRecord = document.getElementById('score-record');
 const scorePoints = document.getElementById('score-points');
 const scoreLosses = document.getElementById('score-losses');
 const scoreWins = document.getElementById('score-wins');
-const buttonHelp = document.getElementById('button-help');
+let buttonHelp = document.getElementById('button-help');
 
 const ls = localStorage;
 let canHelp = true;
+let canWrite = true;
+let usedLetters = '';
 
 const words = ['ordenador', 'javascript'];
 const letters = [
@@ -63,6 +65,11 @@ const firstRenderPoints = () => {
       'totalScore',
       JSON.stringify({ wins: 0, losses: 0, points: 0, record: 0 })
     );
+    scoreRecord.textContent = 'Record: 0';
+    scorePoints.textContent = 'Score: 0';
+    scoreLosses.textContent = 'L: 0';
+    scoreWins.textContent = 'W: 0';
+    gameMemoryCard = { wins: 0, losses: 0, points: 0, record: 0 };
   }
 };
 
@@ -106,6 +113,7 @@ const showPopUp = win => {
   popUpButton.textContent = 'JUGAR OTRA VEZ';
   win ? (gameMemoryCard.wins += 1) : (gameMemoryCard.losses += 1);
   updateLocalStorage();
+  canWrite = false;
 };
 
 const resetGame = () => {
@@ -117,11 +125,16 @@ const resetGame = () => {
   popUp.classList.remove('pop-up--show');
   popUpText.textContent = '';
   popUpButton.textContent = '';
-  const button = document.createElement('BUTTON');
-  button.id = 'button-help';
-  button.classList.add('button-help');
-  button.textContent = 'HELP!!';
-  gameElement.appendChild(button);
+  if (!canHelp) {
+    const button = document.createElement('BUTTON');
+    button.id = 'button-help';
+    button.classList.add('button-help');
+    button.textContent = 'HELP!!';
+    gameElement.appendChild(button);
+    buttonHelp = document.getElementById('button-help');
+  }
+  canWrite = true;
+  usedLetters = '';
 };
 
 const writeWord = () => {
@@ -200,6 +213,8 @@ const markUsedLetters = letter => {
   document
     .querySelector(`[data-letter=${letter.toUpperCase()}]`)
     .classList.add('keyboard__key--used');
+
+  usedLetters += letter.toUpperCase();
 };
 
 const removeUsedLetters = () => {
@@ -209,14 +224,24 @@ const removeUsedLetters = () => {
 };
 
 window.addEventListener('keyup', e => {
-  checkLetter(e.key.toUpperCase());
-  markUsedLetters(e.key);
+  console.log(e.key);
+  if (
+    canWrite &&
+    /[a-z]|[A-Z]/.test(e.key) &&
+    e.key !== 'Backspace' &&
+    usedLetters.search(e.key) == -1
+  ) {
+    checkLetter(e.key.toUpperCase());
+    markUsedLetters(e.key);
+  }
 });
 
 keyboard.addEventListener('click', e => {
-  if (e.target.classList.contains('keyboard__key')) {
-    checkLetter(e.target.textContent);
-    markUsedLetters(e.target.textContent);
+  if (canWrite) {
+    if (e.target.classList.contains('keyboard__key')) {
+      checkLetter(e.target.textContent);
+      markUsedLetters(e.target.textContent);
+    }
   }
 });
 
